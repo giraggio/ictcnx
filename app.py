@@ -24,7 +24,7 @@ def tiene_coincidencia(texto: str, patrones: dict) -> list[str]:
 st.set_page_config(page_title="Buscador ICT Adenda Complementaria CNX", layout="wide")
 st.title("🔍 Buscador de Palabras Clave ICT Adenda Complementaria CNX")
 st.markdown("""
-Respuestas actualizadas al **30/06/2025**.
+Respuestas actualizadas al **30/06/2025**, se incluye control de cambios.
 """)
 # Selección de base de datos
 archivo = "https://raw.githubusercontent.com/giraggio/ictcnx/refs/heads/main/observaciones%20adenda3.csv"
@@ -38,7 +38,7 @@ if 'resultados_df' not in st.session_state:
 # Entrada de palabras clave
 palabras_input = st.text_area(
     "Escribe las palabras o frases clave separadas por coma",
-    "arsenico, plomo, metales"
+    "CEM, CAV-MH-1, agricultura"
 )
 palabras_clave = [p.strip() for p in palabras_input.split(",") if p.strip()]
 patrones = {p: construir_patron(normalizar(p)) for p in palabras_clave}
