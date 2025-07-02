@@ -27,7 +27,7 @@ st.markdown("""
 Respuestas actualizadas al **30/06/2025**.
 """)
 # Selección de base de datos
-archivo = r"C:\Users\GabrielRaggio\OneDrive - SLR Consulting\Documentos\Automatización PAC\Aplicación CNX\palabras clave ict\output\observaciones adenda3.csv"
+archivo = "https://raw.githubusercontent.com/giraggio/ictcnx/refs/heads/main/observaciones%20adenda3.csv"
 
 # Inputs y estados
 if 'buscar' not in st.session_state:
