@@ -24,7 +24,8 @@ def tiene_coincidencia(texto: str, patrones: dict) -> list[str]:
 st.set_page_config(page_title="Buscador ICT Adenda Complementaria CNX", layout="wide")
 st.title("🔍 Buscador de Palabras Clave ICT Adenda Complementaria CNX")
 st.markdown("""
-Respuestas actualizadas al **14/07/2025**, se incluye control de cambios. SE EXCLUYEN OBSERVACIONES DEL TOMO 18, EN CASO DE QUERER ACCEDER A ESTAS, REVISAR BUSCADOR ICC1
+Respuestas actualizadas al **16/07/2025**, se incluye control de cambios. 
+SE EXCLUYEN OBSERVACIONES DEL TOMO 18, EN CASO DE QUERER ACCEDER A ESTAS, REVISAR BUSCADOR ICC1
 """)
 # Selección de base de datos
 archivo = "https://raw.githubusercontent.com/giraggio/ictcnx/refs/heads/main/observaciones%20adenda3.csv"
