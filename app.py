@@ -24,8 +24,8 @@ def tiene_coincidencia(texto: str, patrones: dict) -> list[str]:
 
 # ----------------- Streamlit App -------------------------
 
-st.set_page_config(page_title="Buscador ICC2 CNX", layout="wide")
-st.title("🔍 Buscador de Palabras Clave ICC2 CNX")
+st.set_page_config(page_title="Buscador ICT CNX", layout="wide")
+st.title("🔍 Buscador de Palabras Clave ICT CNX")
 
 # Ruta al archivo CSV
 archivo = 'https://raw.githubusercontent.com/giraggio/ictcnx/refs/heads/main/base_datos_anexo.csv'
