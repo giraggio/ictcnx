@@ -10,9 +10,12 @@ def normalizar(s: str) -> str:
     return unicodedata.normalize("NFKD", s.lower()).encode("ascii", "ignore").decode()
 
 def construir_patron(frase: str) -> re.Pattern:
-    """Crea una expresión regular tolerante a saltos de línea y palabras completas."""
+    """
+    Crea una expresión regular que:
+    - tolere saltos de línea entre palabras
+    - busque palabras completas (evita coincidencias parciales)
+    """
     expr = re.escape(frase.strip())
-    expr = expr.replace(r'\ ', r'\s+')
     return re.compile(rf'\b{expr}\b', re.IGNORECASE | re.MULTILINE)
 
 def tiene_coincidencia(texto: str, patrones: dict) -> list[str]:
@@ -21,14 +24,11 @@ def tiene_coincidencia(texto: str, patrones: dict) -> list[str]:
 
 # ----------------- Streamlit App -------------------------
 
-st.set_page_config(page_title="Buscador ICT Adenda Complementaria CNX", layout="wide")
-st.title("🔍 Buscador de Palabras Clave ICT Adenda Complementaria CNX")
-st.markdown("""
-Respuestas actualizadas al **16/07/2025**, se incluye control de cambios. 
-SE EXCLUYEN OBSERVACIONES DEL TOMO 18, EN CASO DE QUERER ACCEDER A ESTAS, REVISAR BUSCADOR ICC1
-""")
-# Selección de base de datos
-archivo = "https://raw.githubusercontent.com/giraggio/ictcnx/refs/heads/main/observaciones%20adenda3.csv"
+st.set_page_config(page_title="Buscador ICC2 CNX", layout="wide")
+st.title("🔍 Buscador de Palabras Clave ICC2 CNX")
+
+# Ruta al archivo CSV
+archivo = r'C:\Users\GabrielRaggio\OneDrive - SLR Consulting\Documentos\Automatización PAC\Aplicación CNX\palabras clave ict\output\base_datos_anexo.csv'
 
 # Inputs y estados
 if 'buscar' not in st.session_state:
@@ -39,9 +39,10 @@ if 'resultados_df' not in st.session_state:
 # Entrada de palabras clave
 palabras_input = st.text_area(
     "Escribe las palabras o frases clave separadas por coma",
-    "CEM, CAV-MH-1, agricultura"
+    "sitio prioritario, zona protegida"
 )
 palabras_clave = [p.strip() for p in palabras_input.split(",") if p.strip()]
+palabras_norm = [normalizar(p) for p in palabras_clave]
 patrones = {p: construir_patron(normalizar(p)) for p in palabras_clave}
 
 # Acción de búsqueda
@@ -49,11 +50,13 @@ if st.button("Buscar"):
     st.session_state['buscar'] = True
 
     df = pd.read_csv(archivo)
-    df["texto_norm"] = df["texto"].astype(str).apply(normalizar)
+    df["texto_norm"] = df["Texto"].astype(str).apply(normalizar)
 
+    # Detectar coincidencias
     df["coincidencias"] = df["texto_norm"].apply(lambda txt: tiene_coincidencia(txt, patrones))
     df_filtrado = df[df["coincidencias"].str.len() > 0].copy()
 
+    # Crear campo combinaciones únicas para filtrar
     df_filtrado["Palabras Clave (combinadas)"] = df_filtrado["coincidencias"].apply(
         lambda l: ", ".join(sorted(set(l)))
     )
@@ -73,17 +76,19 @@ if st.session_state['buscar']:
         if seleccion != "Todas":
             df_filtrado = df_filtrado[df_filtrado["Palabras Clave (combinadas)"] == seleccion]
 
+        # Explota por coincidencia individual para mostrar
         df_resultados = (
             df_filtrado
             .explode("coincidencias")
             .rename(columns={
                 "coincidencias": "Palabra Clave",
-                "id": "observacion_id"
+                "nombre_archivo": "Archivo"
             })
-            [["Palabras Clave (combinadas)", "observacion_id"]]
+            [["Palabras Clave (combinadas)", "Archivo"]]
             .drop_duplicates()
             .reset_index(drop=True)
         )
 
-        st.success(f"Se encontraron {len(df_resultados)} coincidencias.")
+        st.success(f"Se encontraron {len(df_resultados)} coincidencias en {df_resultados['Archivo'].nunique()} observaciones.")
         st.dataframe(df_resultados)
+
